@@ -7,7 +7,8 @@ from transformers import BertTokenizer, BertModel
 import timm
 import numpy as np  
 from torchvision.datasets import CIFAR10
-
+from tqdm import tqdm  # 引入 tqdm
+from torch.utils.data import SubsetRandomSampler
 
 class ViT(nn.Module):
     def __init__(self, output_dim):
@@ -35,7 +36,13 @@ def load_cifar10_dataset():
         transforms.ToTensor()
     ])
     train_dataset = cifar.CIFAR10(root='./data', train=True, download=True, transform=transform)
-    loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+    # 随机选择一定数量的数据
+    indices = list(range(len(train_dataset)))
+    np.random.shuffle(indices)
+    indices = indices[:100]  # 仅使用部分数据
+    
+    sampler = SubsetRandomSampler(indices)
+    loader = DataLoader(train_dataset, batch_size=4, sampler=sampler)
     classes = train_dataset.classes
     return loader, classes
 
@@ -63,7 +70,8 @@ def train_clip(clip_model, dataset, classes, num_epochs=10, learning_rate=1e-3):
 
     for epoch in range(num_epochs):
         runing_loss = 0.0
-        for images, labels in dataset:
+        progress_bar = tqdm(dataset, desc=f"Epoch [{epoch+1}/{num_epochs}]") 
+        for images, labels in progress_bar:
             texts = [classes[label] for label in labels]
             logits = clip_model(images, texts)
             labels = torch.arange(len(texts))
@@ -76,6 +84,7 @@ def train_clip(clip_model, dataset, classes, num_epochs=10, learning_rate=1e-3):
             optimizer.step()
             
             runing_loss += loss.item()
+            progress_bar.set_postfix(loss=loss.item())  # 更新进度条的后缀信息
 
             print(f'Epoch {epoch}, Loss {loss.item()}')
         print(f'Epoch {epoch}, Loss {runing_loss/len(dataset)}')
@@ -86,9 +95,8 @@ def predict_clip(clip_model, images, classes):
         texts = [classes[0] for _ in range(len(images))]
         logits = clip_model(images, texts)
         preds = torch.argmax(logits, dim=1)
-        _, predict_clip = torch.max(logits, 1)
 
-    return predict_clip
+    return preds
 
 def main():
     dataset, classes = load_cifar10_dataset()

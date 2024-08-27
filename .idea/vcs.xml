@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/1_learn_GPT/ng-video-lecture" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/2_learn_CLIP/mnist-clip" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/learn_transformers/transformers-code" vcs="Git" />
+  </component>
+</project>
