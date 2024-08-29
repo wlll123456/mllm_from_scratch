@@ -4,6 +4,7 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/1_learn_GPT/ng-video-lecture" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/2_learn_CLIP/mnist-clip" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/learn_transformer/A-series-of-NLP" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/learn_transformers/transformers-code" vcs="Git" />
   </component>
 </project>
